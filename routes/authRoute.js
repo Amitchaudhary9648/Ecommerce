@@ -9,7 +9,8 @@ const {
     blockUser,
     unblockUser,
     handleRefreshToken,
-    logout
+    logout,
+    updatePassword
 } = require('../controller/userController');
 const router = express.Router();
 const {
@@ -20,6 +21,7 @@ const {
 
 router.post("/register", createUser);
 router.post("/login", loginUserController);
+router.put('/password', authMiddleware, updatePassword)
 router.get("/all-users", getAllUser);
 router.get("/refresh", handleRefreshToken)
 router.get("/logout", logout)
