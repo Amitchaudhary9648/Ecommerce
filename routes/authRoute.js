@@ -10,7 +10,9 @@ const {
     unblockUser,
     handleRefreshToken,
     logout,
-    updatePassword
+    updatePassword,
+    forgotPassword,
+    resetPassword
 } = require('../controller/userController');
 const router = express.Router();
 const {
@@ -22,6 +24,8 @@ const {
 router.post("/register", createUser);
 router.post("/login", loginUserController);
 router.put('/password', authMiddleware, updatePassword)
+router.post("/forgot-password-token", forgotPassword)
+router.put('/reset-password/:token', resetPassword)
 router.get("/all-users", getAllUser);
 router.get("/refresh", handleRefreshToken)
 router.get("/logout", logout)
