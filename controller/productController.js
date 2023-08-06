@@ -2,6 +2,10 @@ const Product = require('../models/productModel');
 const User = require('../models/userModel');
 const asyncHandler = require('express-async-handler');
 const slugify = require('slugify');
+const cloudinaryUploadImg = require('../utils/cloudinary');
+const validateMongoDbId = require('../utils/validateMongodbId');
+const fs = require('fs');
+
 const createProduct = asyncHandler(async (req, res) => {
     try{
         if(req.body.title){
@@ -183,5 +187,40 @@ const rating = asyncHandler(async(req, res ) => {
     }
 })
 
+const uploadImages = asyncHandler(async(req, res) => {
+    const {id} = req.params;
+    validateMongoDbId(id)
+    try{
+        const uploader = (path) => cloudinaryUploadImg(path, "images");
+        const urls = [];
+        const files = req.files;
+        console.log(files);
+        for(const file of files){
+            const { path } = file;
+            const newPath = await uploader(path);
+            urls.push(newPath);   
+            fs.unlinkSync(path);
+        }
+        const findProduct = await Product.findByIdAndUpdate(id,  {
+            images: urls.map((file) => {
+                return file;
+            })
+        }, {
+            new: true
+        })
+        if(findProduct){
+            res.json(findProduct);
+        } else {
+            res.json({
+                message: "No product found with the id"
+            })
+        }
 
-module.exports = {createProduct, getaProduct, getallProduct, updateProduct, deleteProduct, addToWishList, rating};
+        
+    } catch(error){
+        throw new Error(error);
+    }
+})
+
+
+module.exports = {createProduct, getaProduct, getallProduct, updateProduct, deleteProduct, addToWishList, rating, uploadImages};
