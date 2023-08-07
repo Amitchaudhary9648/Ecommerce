@@ -15,7 +15,14 @@ const {
     resetPassword,
     loginAdmin,
     getWishlist,
-    saveAddress
+    saveAddress,
+    userCart,
+    getUserCart,
+    emptyCart,
+    applyCoupon,
+    createOrder,
+    getOrders,
+    updateOrderStatus
 } = require('../controller/userController');
 const router = express.Router();
 const {
@@ -32,6 +39,13 @@ router.post("/forgot-password-token", forgotPassword)
 router.put('/reset-password/:token', resetPassword)
 router.get("/all-users", getAllUser);
 router.get("/wishlist", authMiddleware, getWishlist);
+router.get("/cart", authMiddleware, getUserCart);
+router.post('/cart', authMiddleware, userCart);
+router.delete('/empty-cart', authMiddleware, emptyCart);
+router.post('/cart/apply-coupon', authMiddleware, applyCoupon);
+router.post('/cart/cash-order', authMiddleware, createOrder)
+router.get('/get-orders', authMiddleware, getOrders);
+router.put('/order/update-order/:id', authMiddleware, isAdmin, updateOrderStatus);
 router.get("/refresh", handleRefreshToken)
 router.get("/logout", logout)
 router.get("/:id", authMiddleware, isAdmin, getaUser)
